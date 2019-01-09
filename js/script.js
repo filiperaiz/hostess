@@ -1,6 +1,10 @@
 const pathUrl = 'https://demo.hostess.digital/agenda';
+// const config = {
+//   headers: { 'Content-Type': 'application/json' }
+// };
+
 const config = {
-  headers: { 'Content-Type': 'application/json' }
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
 };
 
 const userNameInput = $('#userName');

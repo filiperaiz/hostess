@@ -91,12 +91,13 @@ const autoCheckIn = () => {
 
 const clickCheckIn = () => {
   const forms = document.getElementsByClassName('hostess_form');
-  
   const validation = Array.prototype.filter.call(forms, function(form) {
     if (form.checkValidity()) {
       const cpf = document.getElementById('userCpf').value.replace(/\D/g, '');
       startPreloader();
-      postCheckin(cpf);
+      setTimeout(() => {
+        postCheckin(cpf);
+      }, 3000);
     } else {
       document.getElementById('errorForm').style.display = 'block';
       document.getElementById('errorForm').innerHTML = `Preencha seu cpf corretamente`;
@@ -104,11 +105,10 @@ const clickCheckIn = () => {
       setTimeout(() => {
         document.getElementById('errorForm').style.display = 'none';
       }, 10000);
-
-      event.preventDefault();
-      event.stopPropagation();
     }
-
+    
+    event.preventDefault();
+    event.stopPropagation();
     form.classList.add('was-validated');
   });
  
@@ -125,15 +125,15 @@ const postCheckin = cpf => {
     .post(`${pathUrl}/api/check-in/`, params, config)
     .then(response => {
       if (response.data.status == 'error') {
-        document.getElementById( 'result' ).innerHTML = response.data.message;
         document.getElementById('preloader').style.display = 'none';
+        document.getElementById('result').innerHTML = response.data.message;
         document.getElementById('section-secondary').style.display = 'block';
         document.getElementById('tryagain').style.display = 'block';
       }
 
       if (response.data.status == 'single' || response.data.status == 'multiple') {
-        document.getElementById('result').innerHTML = `Seu check-in foi realizado com sucesso, aguarde ser chamado`;
         document.getElementById('preloader').style.display = 'none';
+        document.getElementById('result').innerHTML = `Seu check-in foi realizado com sucesso, aguarde ser chamado`;
         document.getElementById('section-secondary').style.display = 'block';
       }
     });
