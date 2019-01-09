@@ -1,0 +1,48 @@
+---
+layout: base2
+title: Check-in
+---
+
+<section id="section-primary" class="container section-form">
+  <div class="row justify-content-md-center">
+    <div class="col-md-6 col-md-auto">
+      <div id="errorForm" style="display: none;" class="alert alert-danger alert-dismissible fade show" role="alert">
+      </div>
+
+      <div id="preloader" class="text-center"></div>
+
+      <form onsubmit="clickCheckIn()" id="hostess_form" class="hostess_form" novalidate>
+        <div class="form-row">
+          <div class="form-group col-sm-12">
+            <label class="hostess_form-label" for="userCpf">CPF *</label>
+            <input type="text" class="form-control" id="userCpf" name="userCpf" placeholder="Ex: 000.000.000-00 "
+              required />
+          </div>
+
+          <div class="form-group col-sm-12">
+            <button type="submit" class="btn btn-lg btn-warning  btn-block">
+              Realizar Check-In
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section id="section-secondary" class="container">
+  <div class="row justify-content-md-center">
+    <div class="col-md-5 col-md-auto">
+      <div class="card text-center">
+        <div class="card-body">
+          <h4 class="card-title">Check-in Online</h4>
+          <hr>
+          <h5 id="result" class="card-text text-dark"></h5>
+          <div id="tryagain" class="btn btn-warning">Tente novamente</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+

@@ -1,11 +1,11 @@
 {
-  "name": "Site para teste da PWA",
-  "short_name": "PWA teste",
+  "name": "Hostess",
+  "short_name": "Hostess",
   "theme_color": "#369f93",
   "background_color": "#369f93",
   "display": "standalone",
   "scope": "/",
-  "start_url": "/?utm_source=homescreen",
+  "start_url": "/checkin",
   "lang": "pt-BR",
   "orientation": "any",
   "icons": [

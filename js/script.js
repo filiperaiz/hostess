@@ -1,11 +1,6 @@
-const prod = true;
-const urlProduction = 'https://demo.hostess.digital/agenda';
-const urlDevelopment = 'http://localhost:4000';
-
-const pathUrl = prod ? urlProduction : urlDevelopment;
-
+const pathUrl = 'https://demo.hostess.digital/agenda';
 const config = {
-  headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+  headers: { 'Content-Type': 'application/json' }
 };
 
 const userNameInput = $('#userName');
@@ -20,43 +15,34 @@ const getSelectDateHour = $('#selectDateHour');
 const getModalSelectDateHour = $('#modalSelectDateHour');
 const buttonShowModal = $('#btnMoreDatetime');
 const buttonModalConfirm = $('#btnModalConfirm');
+const buttonActivePush = $('#onPushNotification');
 const modalDate = $('#modalDate');
 const hostessForm = $('#hostess_form');
+const onSave = $('#onSave');
+const reschedule = $('#reschedule');
 
+let tokenPush = ''
 
-let reschedule = $('#reschedule');
-let confirmSchedule = $('.schedule-confirm');
+const getMobileOperatingSystem = () => {
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
+  if (/windows phone/i.test(userAgent)) {
+    return 'windows';
+  }
 
+  if (/android/i.test(userAgent)) {
+    return 'android';
+  }
 
+  if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+    return 'ios';
+  }
 
-function getMobileOperatingSystem() {
-  var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+  return 'desktop';
+};
 
-      // Windows Phone must come first because its UA also contains "Android"
-    if (/windows phone/i.test(userAgent)) {
-        return "Windows Phone";
-    }
-
-    if (/android/i.test(userAgent)) {
-        return "Android";
-    }
-
-    // iOS detection from: http://stackoverflow.com/a/9039885/177710
-    if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-        return "ios";
-    }
-
-    return "desktop";
-}
-
-
-
-/* 
-  Validação dos capos de cadastro do paciente
-  */
 userNameInput.keypress(() => {
-  if (userNameInput.val().length < 7) {
+  if (userNameInput.val().length < 4) {
     userNameInput.addClass('is-invalid');
   } else {
     userNameInput.removeClass('is-invalid');
@@ -82,19 +68,14 @@ userFoneInput.keypress(() => {
   }
 });
 
-/* 
-Requisições e validações dos selects
-*/
-
-const init = (params) => {
-  
+const init = () => {
   getSelectProfessionals.prop('disabled', true);
   getSelectSpecialities.prop('disabled', true);
   getSelectDateHour.prop('disabled', true);
   buttonShowModal.prop('disabled', true);
+  document.getElementById('section-secondary').style.display = 'none';
 
-  let navigatorType = getMobileOperatingSystem()
-  
+  let navigatorType = getMobileOperatingSystem();
 
   if (navigatorType == 'ios') {
     document.getElementById('boxPushNotification').style.display = 'none';
@@ -110,21 +91,8 @@ const init = (params) => {
   const optionAgreement = getSelectAgreement[0];
   const optionSpecialities = getSelectSpecialities[0];
 
-
-  // axios.get(`${pathUrl}/get-procedure-service-type-json/`, config).then(response => {
-  //   response.data.map((option, index) => {
-  //     alert('teste')
-  //     optionProcedures[index + 1] = new Option(
-  //           `${option.label}`,
-  //           `${option.value}`
-  //         );
-  //   });
-  // });
-
-
   axios.all([getProcedures(), getAgreement(), getSpecialities()]).then(
     axios.spread(function(procedures, agreements, specialities) {
-      alert('teste')
       procedures.data.map((option, index) => {
         optionProcedures[index + 1] = new Option(
           `${option.label}`,
@@ -149,7 +117,7 @@ const init = (params) => {
   );
 };
 
-const getProfessionals = params => {
+const getProfessionals = (params) => {
   const paramsUrl = params ? `professionals/${params}` : 'professionals/';
   const options = getSelectProfessionals[0];
 
@@ -306,9 +274,6 @@ buttonModalConfirm.click(() => {
     getSelectDateHour.prop('disabled', true);
 
     document.getElementById('other-hour').style.display = 'block';
-    document.getElementById(
-      'otherHourInput'
-    ).value = getModalSelectDateHour.val();
 
     document.getElementById('otherHourList').innerHTML = `
         <ul class="list-group">
@@ -323,59 +288,73 @@ buttonModalConfirm.click(() => {
 });
 
 reschedule.click(() => {
-  console.log('teste reschedule');
-  form[0].reset();
-  form[0].style.display = 'block';
-  confirmSchedule[0].style.display = 'none';
+  hostessForm[0].reset();
+  document.getElementById('section-primary').style.display = 'block';
+  document.getElementById('section-secondary').style.display = 'none';
+
 });
 
+buttonActivePush.click(async () => {
+  try {
+    const messaging = firebase.messaging();
+    await messaging.requestPermission();
+
+    onSave.prop('disabled', true);
+    tokenPush = await messaging.getToken();
+
+    if (tokenPush !== '') {
+      console.log(tokenPush);
+      onSave.prop('disabled', false);
+    }
+
+    return tokenPush;
+  } catch (error) {
+    console.error(error);
+  }
+})
 
 const saveSchedule = () => {
   const forms = document.getElementsByClassName('hostess_form');
 
   const validation = Array.prototype.filter.call(forms, function(form) {
     if (form.checkValidity()) {
-
       const arrayDadosForm = hostessForm.serializeArray();
 
-      let finalDate = (arrayDadosForm[7].value !== '' ? arrayDadosForm[7].value : arrayDadosForm[8].value)
+      let finalDate = arrayDadosForm[7].value !== '' ? arrayDadosForm[7].value : arrayDadosForm[8].value;
+          
+      let formData = {
+          "professional_id": arrayDadosForm[5].value,
+          "customer_name": arrayDadosForm[0].value,
+          "procedure_servicetype_id": arrayDadosForm[3].value,
+          "medical_agreement_id": arrayDadosForm[4].value,
+          "cpf": arrayDadosForm[1].value.replace(/\D/g, ''),
+          "date": finalDate,
+          "phone": arrayDadosForm[2].value.replace(/\D/g, ''),
+          "token_push": tokenPush
+        };
 
-      let formData = `
-           {
-              "customer_name": "${arrayDadosForm[0].value}",
-              "cpf": "${arrayDadosForm[1].value.replace(/\D/g, '')}",
-              "phone": "${arrayDadosForm[2].value.replace(/\D/g, '')}"
-              "procedure_servicetype_id": ${arrayDadosForm[3].value},
-              "medical_agreement_id": ${arrayDadosForm[4].value},
-              "professional_id": ${arrayDadosForm[5].value},
-              "date": "${finalDate}",
-           }
-       `;
+      axios.post(`${pathUrl}/api/scheduled_service/`,formData, config).then(response => {
+       
+        window.localStorage.setItem('dataUser', JSON.stringify(response.data));
 
-      console.log(formData);
-      
-      axios.post(`${pathUrl}/api/scheduled_service/`, config).then(response => {
-        console.log(response);
-        $('#confirm_infos').html(
-          `<p class="title-info">Olá ${
-            response.data.customer_name
-          },</p><p class="content"> Seu agendamento para ${
-            response.data.procedure_servicetype
-          } com o Dr(a). ${response.data.professional} para ${
-            response.data.date
-          } foi realizado com sucesso. </br></br>Ao chegar para seu atendimento às ${
-            response.data.service_desk_date
-          }, realize seu check-in no Totem, informando seu número de telefone cadastrado ou seu CPF.</p>`
-        );
-        form[0].style.display = 'none';
-        confirmSchedule[0].style.display = 'block';
+        document.getElementById('confirm-list').innerHTML = `
+        <li class="list-group-item">Dr(a): <b>${response.data.professional}</b></li>
+        <li class="list-group-item">Consulta: <b>${response.data.date}</b></li>
+        <li class="list-group-item">Atendimento: <b>${response.data.service_desk_date}</b></li>
+      `;
+
+        document.getElementById('section-primary').style.display = 'none';
+        document.getElementById('section-secondary').style.display = 'block';
+      })
+      .catch(function (error) {
+        document.getElementById('section-primary').style.display = 'none';
+        document.getElementById('section-secondary').style.display = 'block';
       });
 
       event.preventDefault();
       event.stopPropagation();
     } else {
-
-      getMobileOperatingSystem()
+      getMobileOperatingSystem();
       console.log('Invalido');
       document.getElementById('errorForm').style.display = 'block';
       document.getElementById(
@@ -394,5 +373,4 @@ const saveSchedule = () => {
   });
 };
 
-
-init()
+init();

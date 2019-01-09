@@ -6,48 +6,48 @@ body {
   height: 100%;
   background-color: #369f93;
   background-image: url(/img/bg-shape.png);
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
 }
 
-.section-form{
+.section-form {
   max-width: 800px;
 }
 
-.hostess{
-  &_section{
-    &-header{
+.hostess {
+  &_section {
+    &-header {
       padding: 20px 0 50px;
-    text-align: center;
+      text-align: center;
 
-      img{
-        margin-bottom: 20px;;
+      img {
+        margin-bottom: 20px;
       }
 
-      h2{
+      h2 {
         color: #fff;
         font-size: 1.6rem;
       }
     }
   }
-  &_form{
-    &-label{
+  &_form {
+    &-label {
       color: #fff;
       font-weight: 700;
     }
   }
 }
 
-#datepicker{
+#datepicker {
   .ui-datepicker-inline {
     width: 100%;
   }
-   .ui-datepicker-title {
+  .ui-datepicker-title {
     background-color: #00d89c;
     color: #fff;
   }
-   .ui-datepicker .ui-datepicker-header {
+  .ui-datepicker .ui-datepicker-header {
     background-color: #00d89c;
     color: #fff;
   }
@@ -65,4 +65,27 @@ body {
     font-weight: normal;
     color: #2b2b2b;
   }
-} 
+}
+
+#section-secondary {
+  h2 {
+    color: #fff;
+    font-size: 1.6rem;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  ul{
+    margin-bottom: 20px;
+  }
+
+  h5{
+    color: #fff;
+  }
+
+
+}
+
+footer{
+  margin-top: 50px;
+}

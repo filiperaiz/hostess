@@ -3,13 +3,10 @@ layout: base
 title: Agendamento Online - Hospital Gastrovita
 permalink: /
 ---
-<div class="container section-form">
+<section id="section-primary" class="container section-form">
   <div class="row">
     <div class="col">
 
-
-
-      <!-- Preencha todos os campos com o <b>'*'</b>, eles são obrigatórios -->
       <div id="errorForm" style="display: none;" class="alert alert-danger alert-dismissible fade show" role="alert">
       </div>
 
@@ -102,21 +99,25 @@ permalink: /
           <div class="form-group col-sm-12 col-md-4 ">
             <div id="boxPushNotification">
               <label class="hostess_form-label" for="selectDateHour">Deseja receber notificações?</label> <br>
-              <button onclick="onPushNotification()" class="btn btn-light" id="btnMoreDatetime" data-toggle="modal"
-                data-target="#modalDate""> Ativar </button>
+              <div id="onPushNotification" class="btn btn-light"> Ativar </div>
             </div>
           </div>
 
           <div class=" form-group col-sm-12
               col-md-4 offset-md-4">
-              <button id="" type="submit" class="btn btn-lg btn-warning  btn-block mt-3">
+              <button id="onSave" type="submit" class="btn btn-lg btn-warning  btn-block mt-3">
                 Agendar Consulta
               </button>
           </div>
         </div>
       </form>
-
-      <p id="tokenFB" style="word-wrap: break-word; margin-top: 10px"></p>
     </div>
   </div>
-</div>
+</section>
+
+
+
+
+<section id="section-secondary" class="container section-form">
+    {% include confirm.html %}
+</section>
