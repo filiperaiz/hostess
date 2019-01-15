@@ -59,7 +59,7 @@ const geoSuccess = pos => {
     'K'
   );
 
-  if (!distance) {
+  if (distance) {
     autoCheckIn();
   } else {
     endPreloader();
