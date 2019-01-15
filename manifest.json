@@ -5,7 +5,7 @@
   "background_color": "#369f93",
   "display": "standalone",
   "scope": "/",
-  "start_url": "/",
+  "start_url": "/checkin",
   "lang": "pt-BR",
   "orientation": "any",
   "icons": [

@@ -59,9 +59,7 @@ const geoSuccess = pos => {
     'K'
   );
 
-  let navigatorType = getMobileOperatingSystem();
-
-  if (!distance && navigatorType !== 'ioss') {
+  if (!distance) {
     autoCheckIn();
   } else {
     endPreloader();
