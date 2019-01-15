@@ -47,8 +47,8 @@ const getLocation = () => {
 const geoSuccess = pos => {
   // localização do Hospital Gatrovita
   const baseLocale = {
-    latitude: 55.755826,
-    longitude: 37.6173
+    latitude: -5.0913084,
+    longitude: -42.806426
   };
 
   const distance = geoDistance(
@@ -153,14 +153,9 @@ const postCheckin = cpf => {
       document.getElementById('tryagain').style.display = 'block';
     }
 
-    if (
-      response.data.status == 'single' ||
-      response.data.status == 'multiple'
-    ) {
+    if ( response.data.status == 'single' || response.data.status == 'multiple' ) {
       document.getElementById('preloader').style.display = 'none';
-      document.getElementById(
-        'result'
-      ).innerHTML = `Seu check-in foi realizado com sucesso, aguarde ser chamado`;
+      document.getElementById('result').innerHTML = `Seu check-in foi realizado com sucesso, aguarde ser chamado`;
       document.getElementById('section-secondary').style.display = 'block';
     }
   });
