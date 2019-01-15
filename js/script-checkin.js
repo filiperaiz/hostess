@@ -101,10 +101,9 @@ const geoDistance = (lat1, lon1, lat2, lon2, unit) => {
 };
 
 const autoCheckIn = () => {
-  let userCpf = '';
   idbKeyval.get('dataUser').then(val => {
-    userCpf = val.cpf;
-    alert(userCpf);
+    let userCpf = val !== undefined ? val.cpf : '';
+    // alert(userCpf);
     postCheckin(userCpf);
   });
 };
