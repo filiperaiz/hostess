@@ -13,17 +13,17 @@ permalink: /
       <form onsubmit="saveSchedule()" id="hostess_form" class="hostess_form" novalidate>
 
         <div class="form-row">
-          <div class="form-group col-sm-12 col-md-4">
+          <div class="form-group col-sm-12 col-md-12">
             <label class="hostess_form-label" for="userName">Nome completo *</label>
             <input type="text" class="form-control" id="userName" name="userName" placeholder="Ex: Maria José " required />
           </div>
 
-          <div class="form-group col-sm-12 col-md-4">
+          <div class="form-group col-sm-12 col-md-6">
             <label class="hostess_form-label" for="userCpf">CPF *</label>
             <input type="text" class="form-control" id="userCpf" name="userCpf" placeholder="Ex: 000.000.000-00 " required />
           </div>
 
-          <div class="form-group col-sm-12 col-md-4">
+          <div class="form-group col-sm-12 col-md-6">
             <label class="hostess_form-label" for="userFone">Telefone *</label>
             <input type="text" class="form-control" id="userFone" name="userFone" placeholder="Ex: (00) 00000-0000" required />
           </div>
@@ -33,14 +33,14 @@ permalink: /
         <hr class="divisor">
 
         <div class="form-row">
-          <div class="form-group col-sm-12 col-md-4">
+          <div class="form-group col-sm-12 col-md-6">
             <label class="hostess_form-label" for="selectProcedures">Procedimento *</label>
             <select class="form-control" id="selectProcedures" name="procedures" required>
               <option value="">Selecione um procedimento</option>
             </select>
           </div>
 
-          <div class="form-group col-sm-12 col-md-4">
+          <div class="form-group col-sm-12 col-md-6">
             <label class="hostess_form-label" for="selectAgreement">Convênio *</label>
             <select class="form-control" id="selectAgreement" name="agreement" required>
               <option value="">Selecione um convênio</option>
@@ -49,25 +49,25 @@ permalink: /
         </div>
 
         <div class="form-row">
-          <div class="form-group col-sm-12 col-md-4">
+          <div class="form-group col-sm-12 col-md-12">
             <label class="hostess_form-label" for="selectProfessionals">Profissionais *</label>
             <select class="form-control" id="selectProfessionals" name="professionals" required>
               <option value="">Selecione um profissional </option>
             </select>
           </div>
 
-          <div class="form-group col-sm-12 col-md-4 offset-md-4">
+          <!-- <div class="form-group col-sm-12 col-md-4 offset-md-4">
             <label class="hostess_form-label" for="selectSpecialities">Deseja filtrar por especialidade?</label>
             <select class="form-control" id="selectSpecialities" name="specialities">
               <option value="">Selecione uma especialidade</option>
             </select>
-          </div>
+          </div> -->
         </div>
 
         <hr class="divisor">
 
         <div class="form-row">
-          <div class="form-group col-sm-12 col-md-4">
+          <div class="form-group col-sm-12 col-md-6">
             <label class="hostess_form-label" for="selectDateHour">Horários Disponíveis *</label>
             <select class="form-control" id="selectDateHour" name="datehour" required>
               <option value="">Selecione um horário</option>
@@ -75,7 +75,7 @@ permalink: /
           </div>
 
 
-          <div class="form-group col-sm-12 col-md-4 offset-md-4">
+          <div class="form-group col-sm-12 col-md-6">
             <div id="other-hour" style="display: none;">
               <label class="hostess_form-label" for="otherHour">Horário Selecionado</label>
               <div id="otherHourList"></div>
@@ -94,29 +94,18 @@ permalink: /
         </div>
 
         <hr class="divisor">
-
-        <div class="form-row">
-          <div class="form-group col-sm-12 col-md-4 ">
-            <div id="boxPushNotification">
-              <label class="hostess_form-label" for="selectDateHour">Deseja receber notificações?</label> <br>
-              <div id="onPushNotification" class="btn btn-light"> Ativar </div>
-            </div>
-          </div>
-
-          <div class=" form-group col-sm-12
-              col-md-4 offset-md-4">
-              <button id="onSave" type="submit" class="btn btn-lg btn-warning  btn-block mt-3">
-                Agendar Consulta
-              </button>
+        <div class="row justify-content-md-center">
+        
+          <div class="col-md-auto">
+            <button id="onSave" type="submit" class="btn btn-lg btn-warning btn-block">
+              Agendar Consulta
+            </button>
           </div>
         </div>
       </form>
     </div>
   </div>
 </section>
-
-
-
 
 <section id="section-secondary" class="container section-form">
     {% include confirm.html %}

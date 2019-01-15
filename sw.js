@@ -1,5 +1,5 @@
 
-const staticCacheName = 'willian-justen-{{ site.time | date: "%Y-%m-%d-%H-%M" }}';
+const staticCacheName = '';
 
 const filesToCache = [];
 

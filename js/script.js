@@ -1,10 +1,6 @@
 const pathUrl = 'https://demo.hostess.digital/agenda';
-// const config = {
-//   headers: { 'Content-Type': 'application/json' }
-// };
-
 const config = {
-  headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+  headers: { 'Content-Type': 'application/json' }
 };
 
 const userNameInput = $('#userName');
@@ -25,8 +21,6 @@ const hostessForm = $('#hostess_form');
 const onSave = $('#onSave');
 const reschedule = $('#reschedule');
 
-let tokenPush = ''
-
 const getMobileOperatingSystem = () => {
   const userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
@@ -45,58 +39,31 @@ const getMobileOperatingSystem = () => {
   return 'desktop';
 };
 
-userNameInput.keypress(() => {
-  if (userNameInput.val().length < 4) {
-    userNameInput.addClass('is-invalid');
-  } else {
-    userNameInput.removeClass('is-invalid');
-  }
-});
-
-userCpfInput.keypress(() => {
-  userCpfInput.mask('000.000.000-00');
-
-  if (userCpfInput.val().length < 14) {
-    userCpfInput.addClass('is-invalid');
-  } else {
-    userCpfInput.removeClass('is-invalid');
-  }
-});
-
-userFoneInput.keypress(() => {
-  userFoneInput.mask('(00) 00000-0000');
-  if (userFoneInput.val().length < 14) {
-    userFoneInput.addClass('is-invalid');
-  } else {
-    userFoneInput.removeClass('is-invalid');
-  }
-});
+const navigatorType = getMobileOperatingSystem();
 
 const init = () => {
-  getSelectProfessionals.prop('disabled', true);
-  getSelectSpecialities.prop('disabled', true);
+  userCpfInput.mask('000.000.000-00');
+  userFoneInput.mask('(00) 00000-0000');
+  getSelectProfessionals.prop('disabled', true)
   getSelectDateHour.prop('disabled', true);
   buttonShowModal.prop('disabled', true);
-  document.getElementById('section-secondary').style.display = 'none';
-
-  let navigatorType = getMobileOperatingSystem();
-
-  if (navigatorType == 'ios') {
-    document.getElementById('boxPushNotification').style.display = 'none';
-  }
 
   const getProcedures = () =>
     axios.get(`${pathUrl}/get-procedure-service-type-json/`, config);
   const getAgreement = () =>
     axios.get(`${pathUrl}/medical-agreements/`, config);
-  const getSpecialities = () => axios.get(`${pathUrl}/expertises/`, config);
+  const getProfessionals = () => axios.get(`${pathUrl}/professionals/`, config);
 
   const optionProcedures = getSelectProcedures[0];
   const optionAgreement = getSelectAgreement[0];
-  const optionSpecialities = getSelectSpecialities[0];
+  const optionProfessionals = getSelectProfessionals[0];
 
-  axios.all([getProcedures(), getAgreement(), getSpecialities()]).then(
-    axios.spread(function(procedures, agreements, specialities) {
+  axios.all([getProfessionals(), getProcedures(), getAgreement()]).then(
+    axios.spread(function(professionals, procedures, agreements) {
+      professionals.data.map((option, index) => {
+        optionProfessionals[index + 1] =  new Option(`${option.tratamento}${option.nome} | ${option.especialidade.join(', ')}`, `${option.id}`);
+      });
+
       procedures.data.map((option, index) => {
         optionProcedures[index + 1] = new Option(
           `${option.label}`,
@@ -110,62 +77,55 @@ const init = () => {
           `${option.id}`
         );
       });
-
-      specialities.data.map((option, index) => {
-        optionSpecialities[index + 1] = new Option(
-          `${option.titulo}`,
-          `${option.id}`
-        );
-      });
     })
   );
-};
 
-const getProfessionals = (params) => {
-  const paramsUrl = params ? `professionals/${params}` : 'professionals/';
-  const options = getSelectProfessionals[0];
-
-  axios.get(`${pathUrl}/${paramsUrl}`, config).then(response => {
-    response.data.map((option, index) => {
-      options[index + 1] = params
-        ? new Option(`${option[1]}`, `${option[0]}`)
-        : new Option(`${option.nome}`, `${option.id}`);
-    });
-  });
+  // Ativa dropdown de busca
+  getSelectProcedures.select2();
+  getSelectAgreement.select2();
+  getSelectProfessionals.select2();
 };
 
 const disableSelectProfessionals = () => {
   (getSelectProcedures.val() && getSelectAgreement.val()) === ''
-    ? (getSelectProfessionals.prop('disabled', true),
-      getSelectSpecialities.prop('disabled', true))
-    : (getSelectProfessionals.prop('disabled', false),
-      getSelectSpecialities.prop('disabled', false));
-
-  if ((getSelectProcedures.val() && getSelectAgreement.val()) !== '') {
-    getProfessionals();
-  }
+  ? getSelectProfessionals.prop('disabled', true) : getSelectProfessionals.prop('disabled', false);
 };
+
+userNameInput.keypress(() => {
+  if (userNameInput.val().length < 4) {
+    userNameInput.addClass('is-invalid');
+  } else {
+    userNameInput.removeClass('is-invalid');
+  }
+});
+
+userCpfInput.keypress(() => {
+  
+  if (userCpfInput.val().length < 14) {
+    userCpfInput.addClass('is-invalid');
+  } else {
+    userCpfInput.removeClass('is-invalid');
+  }
+});
+
+userFoneInput.keypress(() => {
+  if (userFoneInput.val().length < 14) {
+    userFoneInput.addClass('is-invalid');
+  } else {
+    userFoneInput.removeClass('is-invalid');
+  }
+});
 
 getSelectProcedures.change(() => {
   disableSelectProfessionals();
 });
 
 getSelectAgreement.change(() => {
-  getSelectAgreement.val() === ''
-    ? getSelectAgreement.addClass('is-invalid')
-    : getSelectAgreement.removeClass('is-invalid');
-
   disableSelectProfessionals();
 });
 
-getSelectSpecialities.change(() => {
-  let getIdSpec = getSelectSpecialities.val();
-  getIdSpec !== ''
-    ? getProfessionals(`expertise/${getIdSpec}/`)
-    : getProfessionals();
-});
-
 getSelectProfessionals.change(() => {
+
   const options = getSelectDateHour[0];
   const paramUrl = `/agenda-json/professional/${getSelectProfessionals.val()}/procedure-service-type/${getSelectProcedures.val()}`;
 
@@ -298,33 +258,33 @@ reschedule.click(() => {
 
 });
 
-buttonActivePush.click(async () => {
+const activePush = async () => {
   try {
     const messaging = firebase.messaging();
     await messaging.requestPermission();
+    const token = await messaging.getToken()
 
-    onSave.prop('disabled', true);
-    tokenPush = await messaging.getToken();
+    return token;
 
-    if (tokenPush !== '') {
-      console.log(tokenPush);
-      onSave.prop('disabled', false);
-    }
-
-    return tokenPush;
   } catch (error) {
     console.error(error);
+    return ''
   }
-})
+}
 
-const saveSchedule = () => {
+const saveSchedule = async () => {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const tokenPush = (navigatorType !== 'ios' ? await activePush() : '')
+
   const forms = document.getElementsByClassName('hostess_form');
 
   const validation = Array.prototype.filter.call(forms, function(form) {
     if (form.checkValidity()) {
       const arrayDadosForm = hostessForm.serializeArray();
 
-      let finalDate = arrayDadosForm[7].value !== '' ? arrayDadosForm[7].value : arrayDadosForm[8].value;
+      let finalDate = arrayDadosForm[6].value !== '' ? arrayDadosForm[6].value : arrayDadosForm[7].value;
           
       let formData = {
           "professional_id": arrayDadosForm[5].value,
@@ -338,8 +298,8 @@ const saveSchedule = () => {
         };
 
       axios.post(`${pathUrl}/api/scheduled_service/`,formData, config).then(response => {
-       
-        window.localStorage.setItem('dataUser', JSON.stringify(response.data));
+      
+        idbKeyval.set('dataUser', response.data);
 
         document.getElementById('confirm-list').innerHTML = `
         <li class="list-group-item">Dr(a): <b>${response.data.professional}</b></li>
@@ -349,17 +309,18 @@ const saveSchedule = () => {
 
         document.getElementById('section-primary').style.display = 'none';
         document.getElementById('section-secondary').style.display = 'block';
+
+        console.log(navigatorType);
+        if (navigatorType == 'ios') {
+          console.log('Navagador ios');
+          document.getElementById('ios').style.display = 'block';
+        }
+
       })
       .catch(function (error) {
-        document.getElementById('section-primary').style.display = 'none';
-        document.getElementById('section-secondary').style.display = 'block';
+        console.log(error);
       });
-
-      event.preventDefault();
-      event.stopPropagation();
     } else {
-      getMobileOperatingSystem();
-      console.log('Invalido');
       document.getElementById('errorForm').style.display = 'block';
       document.getElementById(
         'errorForm'
@@ -368,9 +329,6 @@ const saveSchedule = () => {
       setTimeout(() => {
         document.getElementById('errorForm').style.display = 'none';
       }, 10000);
-
-      event.preventDefault();
-      event.stopPropagation();
     }
 
     form.classList.add('was-validated');

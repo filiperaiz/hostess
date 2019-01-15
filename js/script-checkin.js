@@ -6,9 +6,9 @@ const config = {
 const buttonTryAgain = $('#tryagain');
 const userCpfInput = $('#userCpf');
 
-userCpfInput.keypress(() => {
-  userCpfInput.mask('000.000.000-00');
+userCpfInput.mask('000.000.000-00');
 
+userCpfInput.keypress(() => {
   if (userCpfInput.val().length < 14) {
     userCpfInput.addClass('is-invalid');
   } else {
@@ -16,12 +16,28 @@ userCpfInput.keypress(() => {
   }
 });
 
+const getMobileOperatingSystem = () => {
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+  if (/windows phone/i.test(userAgent)) {
+    return 'windows';
+  }
+
+  if (/android/i.test(userAgent)) {
+    return 'android';
+  }
+
+  if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+    return 'ios';
+  }
+
+  return 'desktop';
+};
+
+
 const getLocation = () => {
   if (navigator.geolocation) {
-    console.log('Navegador com suporte a geolocalizão!');
     navigator.geolocation.getCurrentPosition(geoSuccess, geoError);
-    const dataUser = JSON.parse(window.localStorage.getItem('dataUser'));
-    // alert(dataUser.cpf);
   } else {
     console.log('Navegador sem suporte a geolocalizão!');
     endPreloader();
@@ -43,7 +59,9 @@ const geoSuccess = pos => {
     'K'
   );
 
-  if (!distance) {
+  let navigatorType = getMobileOperatingSystem();
+
+  if (!distance && navigatorType !== 'ioss') {
     autoCheckIn();
   } else {
     endPreloader();
@@ -85,13 +103,18 @@ const geoDistance = (lat1, lon1, lat2, lon2, unit) => {
 };
 
 const autoCheckIn = () => {
-  const dataUser = JSON.parse(window.localStorage.getItem('dataUser'));
-  postCheckin(dataUser.cpf);
+  let userCpf = '';
+  idbKeyval.get('dataUser').then(val => {
+    userCpf = val.cpf;
+    alert(userCpf);
+    postCheckin(userCpf);
+  });
 };
 
 const clickCheckIn = () => {
   const forms = document.getElementsByClassName('hostess_form');
-  const validation = Array.prototype.filter.call(forms, function(form) {
+
+  Array.prototype.filter.call(forms, function(form) {
     if (form.checkValidity()) {
       const cpf = document.getElementById('userCpf').value.replace(/\D/g, '');
       startPreloader();
@@ -100,18 +123,19 @@ const clickCheckIn = () => {
       }, 3000);
     } else {
       document.getElementById('errorForm').style.display = 'block';
-      document.getElementById('errorForm').innerHTML = `Preencha seu cpf corretamente`;
+      document.getElementById(
+        'errorForm'
+      ).innerHTML = `Preencha seu cpf corretamente`;
 
       setTimeout(() => {
         document.getElementById('errorForm').style.display = 'none';
       }, 10000);
     }
-    
+
     event.preventDefault();
     event.stopPropagation();
     form.classList.add('was-validated');
   });
- 
 };
 
 const postCheckin = cpf => {
@@ -121,30 +145,33 @@ const postCheckin = cpf => {
     text_query: cpf
   };
 
-  axios
-    .post(`${pathUrl}/api/check-in/`, params, config)
-    .then(response => {
-      if (response.data.status == 'error') {
-        document.getElementById('preloader').style.display = 'none';
-        document.getElementById('result').innerHTML = response.data.message;
-        document.getElementById('section-secondary').style.display = 'block';
-        document.getElementById('tryagain').style.display = 'block';
-      }
+  axios.post(`${pathUrl}/api/check-in/`, params, config).then(response => {
+    if (response.data.status == 'error') {
+      document.getElementById('preloader').style.display = 'none';
+      document.getElementById('result').innerHTML = response.data.message;
+      document.getElementById('section-secondary').style.display = 'block';
+      document.getElementById('tryagain').style.display = 'block';
+    }
 
-      if (response.data.status == 'single' || response.data.status == 'multiple') {
-        document.getElementById('preloader').style.display = 'none';
-        document.getElementById('result').innerHTML = `Seu check-in foi realizado com sucesso, aguarde ser chamado`;
-        document.getElementById('section-secondary').style.display = 'block';
-      }
-    });
+    if (
+      response.data.status == 'single' ||
+      response.data.status == 'multiple'
+    ) {
+      document.getElementById('preloader').style.display = 'none';
+      document.getElementById(
+        'result'
+      ).innerHTML = `Seu check-in foi realizado com sucesso, aguarde ser chamado`;
+      document.getElementById('section-secondary').style.display = 'block';
+    }
+  });
 };
 
 const startPreloader = () => {
-  document.getElementById('section-secondary').style.display = 'none';
+  document.getElementById('preloader').style.display = 'block';
   document.getElementById(
     'preloader'
   ).innerHTML = `<img src="/img/loading.svg" alt="">`;
-  document.getElementById('preloader').style.display = 'block';
+  document.getElementById('section-secondary').style.display = 'none';
   document.getElementById('hostess_form').style.display = 'none';
 };
 
@@ -160,31 +187,5 @@ buttonTryAgain.click(() => {
 });
 
 // Init
-getLocation();
 startPreloader();
-
-
-
-
-
-
-// const config2 = {
-//   headers: {
-//     'Content-Type': 'application/json' ,
-//     'Authorization':'key=AAAAI_H5rS4:APA91bFQrNgvHlUVA1YPFVHoaPs52ZGBso-Ibbl4PhdDm0nj_OUiIrbPgkG0rKCKVcsjnjanF2zJEzyPoW5DbBBAKBUIC0PT0br-ct0kPZ_rrKg3hhGQbjZtUmWWW9zx-X8OXANwQKzw'
-//   }
-// };
-
-// let push = {
-//     "notification": {
-//         "title": "Push Teste",
-//         "body": "Push teste funcionando =D",
-//         "click_action": "https://pwaraiz.netlify.com",
-//         "icon": "https://pwaraiz.netlify.com/img/icons/icon-152x152.png"
-//     },
-//     "to": "ecKMXIOv9aU:APA91bEhSGghrYJkBuhuKgPG91OvtO80Ec44ZXsmmrRID_7tKHSJwe5V37THjNKeLe4VKqJWeRp1Pe4hEivGVQfP-iUQ46NVYIVONY3PQIm6kazGjqS4d1gNudaQ3--oO1lbw5mniE9q"
-// }
-
-// axios.post(`https://fcm.googleapis.com/fcm/send`, push, config2).then(response => {
-//  console.log(response);
-// });
+getLocation();

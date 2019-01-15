@@ -16,11 +16,13 @@
 
   <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
 
+  <!-- <link rel="stylesheet" href="./css/chosen.css" /> -->
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="./css/main.css" />
 
   <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}" />
 
-  <meta name="apple-mobile-web-app-capable" content="yes" />
   <!-- icons ios -->
   <link rel="shortcut icon" href="../img/icons/icon-128x128.png" type="image/x-icon" />
   <link rel="apple-touch-icon" href="../img/icons/icon-128x128.png" /> 
@@ -32,8 +34,9 @@
   <link rel="apple-touch-icon" sizes="120x120" href="../img/icons/icon-128x128.png" />
   <link rel="apple-touch-icon" sizes="76x76" href="../img/icons/icon-128x128.png" />
   <link rel="apple-touch-icon" sizes="152x152" href="../img/icons/icon-152x152.png" />
-
+  
   <!-- splash ios -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
   <link rel="apple-touch-startup-image" sizes="2048x2732" href="../img/splash/apple_splash_2048.png" />
   <link rel="apple-touch-startup-image" sizes="1668x2224" href="../img/splash/apple_splash_1668.png" />
   <link rel="apple-touch-startup-image" sizes="1536x2048" href="../img/splash/apple_splash_1536.png" />
@@ -49,7 +52,7 @@
       navigator.serviceWorker
         .register('/sw.js')
         .then(function() {
-          // console.log('Service Worker registered successfully');
+          console.log('Service Worker registered successfully');
         })
         .catch(function() {
           console.log('Service worker registration failed');

@@ -12,7 +12,7 @@ body {
 }
 
 .section-form {
-  max-width: 800px;
+  max-width: 550px;
 }
 
 .hostess {
@@ -68,6 +68,7 @@ body {
 }
 
 #section-secondary {
+  display: none;
   h2 {
     color: #fff;
     font-size: 1.6rem;
@@ -82,10 +83,60 @@ body {
   h5{
     color: #fff;
   }
+}
 
-
+#ios{
+  display: none;
 }
 
 footer{
   margin-top: 50px;
+}
+
+
+
+.select2-container .select2-selection--single {
+  box-sizing: border-box;
+  cursor: pointer;
+  display: block;
+  height: 38px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.select2-container--default .select2-selection--single {
+  display: block;
+    width: 100%;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  color: #444;
+  line-height: 36px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+  border-color: #888 transparent transparent transparent;
+  border-style: solid;
+  border-width: 5px 4px 0 4px;
+  height: 0;
+  left: 50%;
+  margin-left: -4px;
+  margin-top: 3px;
+  position: absolute;
+  top: 50%;
+  width: 0;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+  background-color: #dddddd;
+  color: #000;
+  font-weight: normal;
 }
