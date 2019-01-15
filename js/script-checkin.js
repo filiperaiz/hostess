@@ -104,7 +104,7 @@ const autoCheckIn = () => {
   idbKeyval.get('dataUser').then(val => {
     let userCpf = val !== undefined ? val.cpf : '';
     // alert(userCpf);
-    
+
     postCheckin(userCpf);
   });
 };
