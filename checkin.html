@@ -3,13 +3,13 @@ layout: base2
 title: Check-in
 ---
 
-<section id="section-primary" class="container section-form">
+<div id="preloader" class="text-center"></div>
+<section id="section-primary" class="container section-form" style="display:none;">
   <div class="row justify-content-md-center">
     <div class="col-md-6 col-md-auto">
       <div id="errorForm" style="display: none;" class="alert alert-danger alert-dismissible fade show" role="alert">
       </div>
 
-      <div id="preloader" class="text-center"></div>
 
       <form onsubmit="clickCheckIn()" id="hostess_form" class="hostess_form" novalidate>
         <div class="form-row">
@@ -43,6 +43,23 @@ title: Check-in
       </div>
     </div>
   </div>
+</section>
+
+<section id="section-checkin-error" class="container">
+    <div class="row justify-content-md-center">
+      <div class="col-md-5 col-md-auto">
+        <div class="card text-center">
+          <div class="card-body">
+            <h4 class="card-title">Check-in Online</h4>
+            <hr>
+            <h5 id="result" class="card-text text-dark">
+              Você não está nas mediações do Hospital Gastrovita! <br><br> Tente novamente quando estiver dentro ou próximo do hospital.
+            </h5>
+            <!-- <div id="tryagain" class="btn btn-warning">Voltar</div> -->
+          </div>
+        </div>
+      </div>
+    </div>
 </section>
 
 

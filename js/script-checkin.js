@@ -6,7 +6,14 @@ const config = {
 const buttonTryAgain = $('#tryagain');
 const userCpfInput = $('#userCpf');
 
-userCpfInput.mask('000.000.000-00');
+const init = () => {
+  startPreloader();
+  setTimeout(() => {
+    getLocation();
+  }, 3000);
+
+  userCpfInput.mask('000.000.000-00');
+};
 
 userCpfInput.keypress(() => {
   if (userCpfInput.val().length < 14) {
@@ -34,12 +41,10 @@ const getMobileOperatingSystem = () => {
   return 'desktop';
 };
 
-
 const getLocation = () => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(geoSuccess, geoError);
   } else {
-    console.log('Navegador sem suporte a geolocalizão!');
     endPreloader();
   }
 };
@@ -60,10 +65,12 @@ const geoSuccess = pos => {
   );
 
   if (distance) {
-    autoCheckIn();
+    document.getElementById('section-primary').style.display = 'block';
   } else {
-    endPreloader();
+    document.getElementById('section-checkin-error').style.display = 'block';
   }
+
+  endPreloader();
 };
 
 const geoError = error => {
@@ -93,20 +100,11 @@ const geoDistance = (lat1, lon1, lat2, lon2, unit) => {
 
   let result = false;
 
-  if (dist < 0.3) {
+  if (dist < 0.2) {
     result = true;
   }
 
   return result;
-};
-
-const autoCheckIn = () => {
-  idbKeyval.get('dataUser').then(val => {
-    let userCpf = val !== undefined ? val.cpf : '';
-    // alert(userCpf);
-
-    postCheckin(userCpf);
-  });
 };
 
 const clickCheckIn = () => {
@@ -116,6 +114,7 @@ const clickCheckIn = () => {
     if (form.checkValidity()) {
       const cpf = document.getElementById('userCpf').value.replace(/\D/g, '');
       startPreloader();
+
       setTimeout(() => {
         postCheckin(cpf);
       }, 3000);
@@ -139,9 +138,7 @@ const clickCheckIn = () => {
 const postCheckin = cpf => {
   document.getElementById('tryagain').style.display = 'none';
 
-  const params = {
-    text_query: cpf
-  };
+  const params = { text_query: cpf };
 
   axios.post(`${pathUrl}/api/check-in/`, params, config).then(response => {
     if (response.data.status == 'error') {
@@ -151,9 +148,14 @@ const postCheckin = cpf => {
       document.getElementById('tryagain').style.display = 'block';
     }
 
-    if ( response.data.status == 'single' || response.data.status == 'multiple' ) {
+    if (
+      response.data.status == 'single' ||
+      response.data.status == 'multiple'
+    ) {
       document.getElementById('preloader').style.display = 'none';
-      document.getElementById('result').innerHTML = `Seu check-in foi realizado com sucesso, aguarde ser chamado`;
+      document.getElementById(
+        'result'
+      ).innerHTML = `Seu check-in foi realizado com sucesso, aguarde ser chamado`;
       document.getElementById('section-secondary').style.display = 'block';
     }
   });
@@ -161,9 +163,7 @@ const postCheckin = cpf => {
 
 const startPreloader = () => {
   document.getElementById('preloader').style.display = 'block';
-  document.getElementById(
-    'preloader'
-  ).innerHTML = `<img src="/img/loading.svg" alt="">`;
+  document.getElementById('preloader').innerHTML = `<img src="/img/loading.svg" alt="">`;
   document.getElementById('section-secondary').style.display = 'none';
   document.getElementById('hostess_form').style.display = 'none';
 };
@@ -180,5 +180,4 @@ buttonTryAgain.click(() => {
 });
 
 // Init
-startPreloader();
-getLocation();
+init();

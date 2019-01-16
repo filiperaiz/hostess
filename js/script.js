@@ -15,11 +15,10 @@ const getSelectDateHour = $('#selectDateHour');
 const getModalSelectDateHour = $('#modalSelectDateHour');
 const buttonShowModal = $('#btnMoreDatetime');
 const buttonModalConfirm = $('#btnModalConfirm');
-const buttonActivePush = $('#onPushNotification');
 const modalDate = $('#modalDate');
 const hostessForm = $('#hostess_form');
-const onSave = $('#onSave');
 const reschedule = $('#reschedule');
+const selectClick = $('.select-click');
 
 const getMobileOperatingSystem = () => {
   const userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -44,7 +43,7 @@ const navigatorType = getMobileOperatingSystem();
 const init = () => {
   userCpfInput.mask('000.000.000-00');
   userFoneInput.mask('(00) 00000-0000');
-  getSelectProfessionals.prop('disabled', true)
+  getSelectProfessionals.prop('disabled', true);
   getSelectDateHour.prop('disabled', true);
   buttonShowModal.prop('disabled', true);
 
@@ -61,9 +60,12 @@ const init = () => {
   axios.all([getProfessionals(), getProcedures(), getAgreement()]).then(
     axios.spread(function(professionals, procedures, agreements) {
       professionals.data.map((option, index) => {
-        optionProfessionals[index + 1] =  new Option(`${option.tratamento}${option.nome} | ${option.especialidade.join(', ')}`, `${option.id}`);
+        optionProfessionals[index + 1] = new Option(
+          `${option.tratamento}${option.nome} | ${option.especialidade.join(', ')}`,
+          `${option.id}`
+        );
       });
-
+    
       procedures.data.map((option, index) => {
         optionProcedures[index + 1] = new Option(
           `${option.label}`,
@@ -77,18 +79,31 @@ const init = () => {
           `${option.id}`
         );
       });
+
     })
   );
 
   // Ativa dropdown de busca
-  getSelectProcedures.select2();
-  getSelectAgreement.select2();
-  getSelectProfessionals.select2();
+  getSelectProcedures.select2({
+    placeholder: 'Selecione um procedimento',
+    allowClear: true
+  });
+
+  getSelectAgreement.select2({
+    placeholder: 'Selecione um convênio',
+    allowClear: true
+  });
+
+  getSelectProfessionals.select2({
+    placeholder: 'Selecione um profissional',
+    allowClear: true
+  });  
 };
 
 const disableSelectProfessionals = () => {
   (getSelectProcedures.val() && getSelectAgreement.val()) === ''
-  ? getSelectProfessionals.prop('disabled', true) : getSelectProfessionals.prop('disabled', false);
+  ? getSelectProfessionals.prop('disabled', true)
+  : getSelectProfessionals.prop('disabled', false);
 };
 
 userNameInput.keypress(() => {
@@ -100,7 +115,6 @@ userNameInput.keypress(() => {
 });
 
 userCpfInput.keypress(() => {
-  
   if (userCpfInput.val().length < 14) {
     userCpfInput.addClass('is-invalid');
   } else {
@@ -116,6 +130,10 @@ userFoneInput.keypress(() => {
   }
 });
 
+selectClick.click(function() {
+  $(".select2-search__field").attr("placeholder", "Selecione ou digite aqui");
+});
+
 getSelectProcedures.change(() => {
   disableSelectProfessionals();
 });
@@ -125,10 +143,9 @@ getSelectAgreement.change(() => {
 });
 
 getSelectProfessionals.change(() => {
-
   const options = getSelectDateHour[0];
   const paramUrl = `/agenda-json/professional/${getSelectProfessionals.val()}/procedure-service-type/${getSelectProcedures.val()}`;
-
+  
   if (getSelectProfessionals.val() !== '') {
     axios.get(`${pathUrl}/${paramUrl}`, config).then(response => {
       response.data.agenda.map((option, index) => {
@@ -136,12 +153,8 @@ getSelectProfessionals.change(() => {
       });
     });
   }
-
-  getSelectProfessionals.val() === ''
-    ? (getSelectDateHour.prop('disabled', true),
-      buttonShowModal.prop('disabled', true))
-    : (getSelectDateHour.prop('disabled', false),
-      buttonShowModal.prop('disabled', false));
+  
+  getSelectProfessionals.val() === '' ? (getSelectDateHour.prop('disabled', true), buttonShowModal.prop('disabled', true)) : (getSelectDateHour.prop('disabled', false), buttonShowModal.prop('disabled', false));
 });
 
 buttonShowModal.click(() => {
@@ -190,10 +203,10 @@ buttonShowModal.click(() => {
     nextText: 'Próximo',
     prevText: 'Anterior',
     onSelect: function(dateSelected) {
-      let arrayDateSelected = dateSelected.split('/');
-      let daySelected = arrayDateSelected[0];
-      let monthSelected = arrayDateSelected[1];
-      let yearSelected = arrayDateSelected[2];
+      const arrayDateSelected = dateSelected.split('/');
+      const daySelected = arrayDateSelected[0];
+      const monthSelected = arrayDateSelected[1];
+      const yearSelected = arrayDateSelected[2];
 
       const paramsUrl = `calendar-times-json/professional/${getSelectProfessionals.val()}/procedure-service-type/${getSelectProcedures.val()}/year/${yearSelected}/month/${monthSelected}/day/${daySelected}/`;
 
@@ -205,16 +218,13 @@ buttonShowModal.click(() => {
           document.getElementById('select-time').style.display = 'block';
 
           response.data.time_ranges.available.map((option, index) => {
-            options[index + 1] = new Option(
-              `${option}`,
-              `${yearSelected}-${monthSelected}-${daySelected} ${option}`
-            );
+            options[index + 1] = new Option( `${option}`, `${yearSelected}-${monthSelected}-${daySelected} ${option}` );
           });
+
         } else {
           document.getElementById('select-time').style.display = 'none';
           document.getElementById('error').style.display = 'block';
-          document.getElementById('error').innerHTML =
-            'Nenhum horário disponível para esta data';
+          document.getElementById('error').innerHTML = 'Nenhum horário disponível para esta data';
 
           setTimeout(() => {
             document.getElementById('error').style.display = 'none';
@@ -228,11 +238,11 @@ buttonShowModal.click(() => {
 buttonModalConfirm.click(() => {
   modalDate.modal('hide');
 
-  let data = getModalSelectDateHour.val();
-  let array = data.split(' ');
-  let hour = array[1];
-  let date = array[0].split('-');
-  let formatDate = `${date[2]}/${date[1]}/${date[0]}`;
+  const data = getModalSelectDateHour.val();
+  const array = data.split(' ');
+  const hour = array[1];
+  const date = array[0].split('-');
+  const formatDate = `${date[2]}/${date[1]}/${date[0]}`;
 
   if (getModalSelectDateHour.val() !== '') {
     getSelectDateHour.prop('disabled', true);
@@ -252,79 +262,72 @@ buttonModalConfirm.click(() => {
 });
 
 reschedule.click(() => {
-  hostessForm[0].reset();
-  document.getElementById('section-primary').style.display = 'block';
-  document.getElementById('section-secondary').style.display = 'none';
-
+  window.location.reload();
 });
 
 const activePush = async () => {
   try {
     const messaging = firebase.messaging();
     await messaging.requestPermission();
-    const token = await messaging.getToken()
+    const token = await messaging.getToken();
 
     return token;
-
   } catch (error) {
     console.error(error);
-    return ''
+    return '';
   }
-}
+};
 
 const saveSchedule = async () => {
   event.preventDefault();
   event.stopPropagation();
 
-  const tokenPush = (navigatorType !== 'ios' ? await activePush() : '')
+  const tokenPush = navigatorType !== 'ios' ? await activePush() : '';
 
   const forms = document.getElementsByClassName('hostess_form');
 
   const validation = Array.prototype.filter.call(forms, function(form) {
     if (form.checkValidity()) {
-      const arrayDadosForm = hostessForm.serializeArray();
+      const formData = hostessForm.serializeArray();
 
-      let finalDate = arrayDadosForm[6].value !== '' ? arrayDadosForm[6].value : arrayDadosForm[7].value;
-          
-      let formData = {
-          "professional_id": arrayDadosForm[5].value,
-          "customer_name": arrayDadosForm[0].value,
-          "procedure_servicetype_id": arrayDadosForm[3].value,
-          "medical_agreement_id": arrayDadosForm[4].value,
-          "cpf": arrayDadosForm[1].value.replace(/\D/g, ''),
-          "date": finalDate,
-          "phone": arrayDadosForm[2].value.replace(/\D/g, ''),
-          "token_push": tokenPush
-        };
+      const finalDate = formData[6].value !== '' ? formData[6].value : formData[7].value;
 
-      axios.post(`${pathUrl}/api/scheduled_service/`,formData, config).then(response => {
-      
-        idbKeyval.set('dataUser', response.data);
+      const formParams = {
+        customer_name: formData[0].value,
+        cpf: formData[1].value.replace(/\D/g, ''),
+        phone: formData[2].value.replace(/\D/g, ''),
+        procedure_servicetype_id: formData[3].value,
+        medical_agreement_id: formData[4].value,
+        professional_id: formData[5].value,
+        date: finalDate,
+        token_push: tokenPush
+      };
 
-        document.getElementById('confirm-list').innerHTML = `
-        <li class="list-group-item">Dr(a): <b>${response.data.professional}</b></li>
-        <li class="list-group-item">Consulta: <b>${response.data.date}</b></li>
-        <li class="list-group-item">Atendimento: <b>${response.data.service_desk_date}</b></li>
-      `;
+      axios.post(`${pathUrl}/api/scheduled_service/`, formParams, config).then(response => {
+          const data = response.data;
 
-        document.getElementById('section-primary').style.display = 'none';
-        document.getElementById('section-secondary').style.display = 'block';
+          document.getElementById('confirm-list').innerHTML = `
+            <ul class="list-group">
+              <li class="list-group-item">Dr(a): <b>${ data.professional }</b></li>
+              <li class="list-group-item">Consulta: <b>${data.date}</b></li>
+              <li class="list-group-item">Atendimento: <b>${ data.service_desk_date }</b></li>
+            </ul>
+          `;
+    
+          document.getElementById('section-primary').style.display = 'none';
+          document.getElementById('section-secondary').style.display = 'block';
 
-        console.log(navigatorType);
-        if (navigatorType == 'ios') {
-          console.log('Navagador ios');
-          document.getElementById('ios').style.display = 'block';
-        }
-
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+          if (navigatorType == 'ios') {
+            console.log('Navagador ios');
+            document.getElementById('ios').style.display = 'block';
+          }
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     } else {
       document.getElementById('errorForm').style.display = 'block';
-      document.getElementById(
-        'errorForm'
-      ).innerHTML = `Preencha todos os campos sinalizados em vermelho, eles são obrigatórios`;
+      document.getElementById('errorForm').innerHTML = `Preencha todos os campos sinalizados em vermelho, eles são obrigatórios`;
 
       setTimeout(() => {
         document.getElementById('errorForm').style.display = 'none';
