@@ -6,8 +6,16 @@ const config = {
 const buttonTryAgain = $('#tryagain');
 const userCpfInput = $('#userCpf');
 
+buttonTryAgain.click(() => {
+  window.location.reload(true)
+});
+
+const startPreloader = () => document.getElementById('preloader').style.display = 'block';
+const endPreloader = () => document.getElementById('preloader').style.display = 'none';
+
 const init = () => {
   startPreloader();
+
   setTimeout(() => {
     getLocation();
   }, 3000);
@@ -16,36 +24,14 @@ const init = () => {
 };
 
 userCpfInput.keypress(() => {
-  if (userCpfInput.val().length < 14) {
-    userCpfInput.addClass('is-invalid');
-  } else {
-    userCpfInput.removeClass('is-invalid');
-  }
+  userCpfInput.val().length < 14 ? userCpfInput.addClass('is-invalid') : userCpfInput.removeClass('is-invalid');
 });
-
-const getMobileOperatingSystem = () => {
-  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-  if (/windows phone/i.test(userAgent)) {
-    return 'windows';
-  }
-
-  if (/android/i.test(userAgent)) {
-    return 'android';
-  }
-
-  if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-    return 'ios';
-  }
-
-  return 'desktop';
-};
 
 const getLocation = () => {
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(geoSuccess, geoError);
+    navigator.geolocation.watchPosition(geoSuccess, geoError, { enableHighAccuracy: true });
   } else {
-    endPreloader();
+    geoLocationError();
   }
 };
 
@@ -64,18 +50,59 @@ const geoSuccess = pos => {
     'K'
   );
 
-  if (distance) {
+  if (!distance) {
     document.getElementById('section-primary').style.display = 'block';
+    alert('Localização Ativada')
   } else {
-    document.getElementById('section-checkin-error').style.display = 'block';
+    geoError({ code: 400, message: 'Wrong Geolocation' });
   }
 
   endPreloader();
 };
 
 const geoError = error => {
+  let msg = '';
+  let activeBtn = false;
+
+  const messages = {
+    msg1: 'Usuário negou a solicitação de Geolocalização, assim não sendo permitido a realização do check-in online',
+    msg2: 'As informações de localização não estão disponíveis. Ative a sua localização e tente novamente',
+    msg3: 'O pedido para obter a localização do usuário expirou.',
+    msg4: 'Ocorreu um erro desconhecido.',
+    msg5: `Você não está nas mediações do Hospital Gastrovita! <br><br> Tente novamente quando estiver dentro ou próximo do hospital.`,
+  }
+
+  switch (error.code) {
+    case error.PERMISSION_DENIED:
+      msg = messages.msg1
+      break;
+    case error.POSITION_UNAVAILABLE:
+      msg = messages.msg2
+      activeBtn = true;
+      break;
+    case error.TIMEOUT:
+      msg = messages.msg3
+      break;
+    case error.UNKNOWN_ERROR:
+      msg = messages.msg4
+      break;
+  }
+
+  if (error.code == 400) {
+    msg = messages.msg5;
+    activeBtn = true;
+  }
+
   if (error.code) {
+    document.getElementById('section-secondary').style.display = 'block';
+    document.getElementById('result-message').innerHTML = msg;
+
+    if (activeBtn) {
+      document.getElementById('tryagain').style.display = 'block';
+    }
     endPreloader();
+
+    alert(msg)
   }
 };
 
@@ -120,9 +147,7 @@ const clickCheckIn = () => {
       }, 3000);
     } else {
       document.getElementById('errorForm').style.display = 'block';
-      document.getElementById(
-        'errorForm'
-      ).innerHTML = `Preencha seu cpf corretamente`;
+      document.getElementById('errorForm').innerHTML = `Preencha seu cpf corretamente`;
 
       setTimeout(() => {
         document.getElementById('errorForm').style.display = 'none';
@@ -141,43 +166,24 @@ const postCheckin = cpf => {
   const params = { text_query: cpf };
 
   axios.post(`${pathUrl}/api/check-in/`, params, config).then(response => {
-    if (response.data.status == 'error') {
-      document.getElementById('preloader').style.display = 'none';
-      document.getElementById('result').innerHTML = response.data.message;
-      document.getElementById('section-secondary').style.display = 'block';
+    if (response.data.status !== 'error') {
+      document.getElementById('result-message').innerHTML = `Seu check-in foi realizado com sucesso, aguarde ser chamado`;
+    } else {
+      document.getElementById('result-message').innerHTML = response.data.message;
       document.getElementById('tryagain').style.display = 'block';
     }
 
-    if (
-      response.data.status == 'single' ||
-      response.data.status == 'multiple'
-    ) {
-      document.getElementById('preloader').style.display = 'none';
-      document.getElementById(
-        'result'
-      ).innerHTML = `Seu check-in foi realizado com sucesso, aguarde ser chamado`;
-      document.getElementById('section-secondary').style.display = 'block';
-    }
+    document.getElementById('preloader').style.display = 'none';
+    document.getElementById('section-secondary').style.display = 'block';
   });
 };
 
-const startPreloader = () => {
-  document.getElementById('preloader').style.display = 'block';
-  document.getElementById('preloader').innerHTML = `<img src="/img/loading.svg" alt="">`;
-  document.getElementById('section-secondary').style.display = 'none';
-  document.getElementById('hostess_form').style.display = 'none';
-};
-
-const endPreloader = () => {
+const geoLocationError = () => {
+  document.getElementById('section-secondary').style.display = 'block';
+  document.getElementById('result-message').innerHTML = 'Seu navegador não possui suporte a Geolocalização';
+  document.getElementById('tryagain').style.display = 'block';
   document.getElementById('preloader').style.display = 'none';
-  document.getElementById('hostess_form').style.display = 'block';
 };
-
-buttonTryAgain.click(() => {
-  document.getElementById('tryagain').style.display = 'none';
-  document.getElementById('hostess_form').style.display = 'block';
-  document.getElementById('section-secondary').style.display = 'none';
-});
 
 // Init
 init();

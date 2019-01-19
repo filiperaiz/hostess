@@ -1,29 +1,13 @@
-
-const staticCacheName = '';
-
-const filesToCache = [];
-
-// Cache on install
-this.addEventListener("install", event => {
-  this.skipWaiting();
-
-  event.waitUntil(
-    caches.open(staticCacheName)
-      .then(cache => {
-        return cache.addAll(filesToCache);
-    })
-  )
+self.addEventListener('install', function (event) {
+  // console.log('[Service Worker] Instalando Service Worker...', event);
 });
 
-// Serve from Cache
-this.addEventListener("fetch", event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        return response || fetch(event.request);
-      })
-      .catch(() => {
-        return caches.match('/index.html');
-      })
-  )
+self.addEventListener('activate', function (event) {
+  // console.log('[Service Worker] Ativando Service Worker ...', event);
+  return self.clients.claim();
+});
+
+self.addEventListener('fetch', function (event) {
+  // console.log('[Service Worker] Procurando algo...', event);
+  event.respondWith(fetch(event.request));
 });

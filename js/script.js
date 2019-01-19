@@ -107,27 +107,15 @@ const disableSelectProfessionals = () => {
 };
 
 userNameInput.keypress(() => {
-  if (userNameInput.val().length < 4) {
-    userNameInput.addClass('is-invalid');
-  } else {
-    userNameInput.removeClass('is-invalid');
-  }
+  userNameInput.val().length < 4 ? userNameInput.addClass('is-invalid') : userNameInput.removeClass('is-invalid');
 });
 
 userCpfInput.keypress(() => {
-  if (userCpfInput.val().length < 14) {
-    userCpfInput.addClass('is-invalid');
-  } else {
-    userCpfInput.removeClass('is-invalid');
-  }
+  userCpfInput.val().length < 14 ? userCpfInput.addClass('is-invalid') : userCpfInput.removeClass('is-invalid');
 });
 
 userFoneInput.keypress(() => {
-  if (userFoneInput.val().length < 14) {
-    userFoneInput.addClass('is-invalid');
-  } else {
-    userFoneInput.removeClass('is-invalid');
-  }
+  userFoneInput.val().length < 14 ? userFoneInput.addClass('is-invalid') : userFoneInput.removeClass('is-invalid');
 });
 
 selectClick.click(function() {
@@ -318,9 +306,14 @@ const saveSchedule = async () => {
           document.getElementById('section-secondary').style.display = 'block';
 
           if (navigatorType == 'ios') {
-            console.log('Navagador ios');
             document.getElementById('ios').style.display = 'block';
           }
+
+          if (navigatorType == 'android') {
+            document.getElementById('android').style.display = 'block';
+          }
+
+
         })
         .catch(function(error) {
           console.log(error);
