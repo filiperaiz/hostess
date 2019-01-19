@@ -6,6 +6,9 @@ const config = {
 const buttonTryAgain = $('#tryagain');
 const userCpfInput = $('#userCpf');
 
+let geoId = 0; 
+let km = 0;
+
 buttonTryAgain.click(() => {
   window.location.reload(true)
 });
@@ -29,7 +32,7 @@ userCpfInput.keypress(() => {
 
 const getLocation = () => {
   if (navigator.geolocation) {
-    navigator.geolocation.watchPosition(geoSuccess, geoError, { enableHighAccuracy: true });
+    geoId = navigator.geolocation.watchPosition(geoSuccess, geoError, { enableHighAccuracy: true });
   } else {
     geoLocationError();
   }
@@ -50,9 +53,9 @@ const geoSuccess = pos => {
     'K'
   );
 
-  if (!distance) {
+  if (distance) {
     document.getElementById('section-primary').style.display = 'block';
-    alert('Localização Ativada')
+    navigator.geolocation.clearWatch(geoId);
   } else {
     geoError({ code: 400, message: 'Wrong Geolocation' });
   }
@@ -69,7 +72,7 @@ const geoError = error => {
     msg2: 'As informações de localização não estão disponíveis. Ative a sua localização e tente novamente',
     msg3: 'O pedido para obter a localização do usuário expirou.',
     msg4: 'Ocorreu um erro desconhecido.',
-    msg5: `Você não está nas mediações do Hospital Gastrovita! <br><br> Tente novamente quando estiver dentro ou próximo do hospital.`,
+    msg5: `Você está a <strong>${km}km</strong> de distância do Hospital Gastrovita! <br><br> Tente novamente quando estiver dentro ou próximo do hospital.`,
   }
 
   switch (error.code) {
@@ -101,8 +104,6 @@ const geoError = error => {
       document.getElementById('tryagain').style.display = 'block';
     }
     endPreloader();
-
-    alert(msg)
   }
 };
 
@@ -126,6 +127,8 @@ const geoDistance = (lat1, lon1, lat2, lon2, unit) => {
   }
 
   let result = false;
+
+  km = Math.round(dist) / 1000
 
   if (dist < 0.2) {
     result = true;
