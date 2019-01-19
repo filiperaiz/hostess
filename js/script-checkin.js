@@ -1,31 +1,26 @@
 const pathUrl = 'https://demo.hostess.digital/agenda';
-const config = {
-  headers: { 'Content-Type': 'application/json' }
-};
+const config = { headers: { 'Content-Type': 'application/json' }};
 
-const buttonTryAgain = $('#tryagain');
 const userCpfInput = $('#userCpf');
+const buttonTryAgain = $('#tryagain');
+const tryAgain = $('#tryagain')[0];
+const sectionPrimary = $('#section-primary')[0];
+const sectionSecondary = $('#section-secondary')[0];
+const loading = $('#preloader')[0];
+const errorForm = $('#errorFormm')[0];
+const resultMessage = $('#result-message')[0];
 
 let geoId = 0; 
 let km = 0;
 
 buttonTryAgain.click(() => {
-  // window.location.reload(true)
-  document.getElementById('section-secondary').style.display = 'none';
-
+  sectionSecondary.style.display = 'none';
   init()
 });
 
-const startPreloader = () => document.getElementById('preloader').style.display = 'block';
-const endPreloader = () => document.getElementById('preloader').style.display = 'none';
-
 const init = () => {
-  startPreloader();
-
-  setTimeout(() => {
-    getLocation();
-  }, 3000);
-
+  loading.style.display = 'block';
+  setTimeout(() => getLocation(), 3000);
   userCpfInput.mask('000.000.000-00');
 };
 
@@ -41,7 +36,7 @@ const getLocation = () => {
   }
 };
 
-const geoSuccess = pos => {
+const geoSuccess = (pos) => {
   // localização do Hospital Gatrovita
   const baseLocale = {
     latitude: -5.0913084,
@@ -57,25 +52,24 @@ const geoSuccess = pos => {
   );
 
   if (distance) {
-    document.getElementById('section-primary').style.display = 'block';
     navigator.geolocation.clearWatch(geoId);
+    sectionPrimary.style.display = 'block';
+    loading.style.display = 'none';
   } else {
     geoError({ code: 400, message: 'Wrong Geolocation' });
   }
-
-  endPreloader();
 };
 
-const geoError = error => {
+const geoError = (error) => {
   let msg = '';
   let activeBtn = false;
 
   const messages = {
-    msg1: 'Usuário negou a solicitação de Geolocalização, assim não sendo permitido a realização do check-in online',
-    msg2: 'As informações de localização não estão disponíveis. Ative a sua localização e tente novamente',
-    msg3: 'O pedido para obter a localização do usuário expirou.',
-    msg4: 'Ocorreu um erro desconhecido.',
-    msg5: `Você está a <strong>${km.toFixed(2)}km</strong> de distância do Hospital Gastrovita! <br><br> Tente novamente quando estiver dentro ou próximo do hospital.`,
+    msg1: `Usuário negou a solicitação de Geolocalização, assim não sendo permitido a realização do check-in online`,
+    msg2: `As informações de localização não estão disponíveis. Ative a sua localização e tente novamente`,
+    msg3: `O pedido para obter a localização do usuário expirou.`,
+    msg4: `Ocorreu um erro desconhecido.`,
+    msg5: `Você está a <strong>${km.toFixed(2)}km</strong> de distância do Hospital Gastrovita! <br><br> Tente novamente quando estiver dentro ou próximo do hospital.`
   }
 
   switch (error.code) {
@@ -100,13 +94,12 @@ const geoError = error => {
   }
 
   if (error.code) {
-    document.getElementById('section-secondary').style.display = 'block';
-    document.getElementById('result-message').innerHTML = msg;
-
     if (activeBtn) {
-      document.getElementById('tryagain').style.display = 'block';
+      tryAgain.style.display = 'block';
     }
-    endPreloader();
+    sectionSecondary.style.display = 'block';
+    resultMessage.innerHTML = msg;
+    loading.style.display = 'none';
   }
 };
 
@@ -145,19 +138,19 @@ const clickCheckIn = () => {
 
   Array.prototype.filter.call(forms, function(form) {
     if (form.checkValidity()) {
+      loading.style.display = 'block';
+      
       const cpf = document.getElementById('userCpf').value.replace(/\D/g, '');
-      startPreloader();
-
+      
+      sectionPrimary.style.display = 'none';
+      
       setTimeout(() => {
         postCheckin(cpf);
       }, 3000);
     } else {
-      document.getElementById('errorForm').style.display = 'block';
-      document.getElementById('errorForm').innerHTML = `Preencha seu cpf corretamente`;
-
-      setTimeout(() => {
-        document.getElementById('errorForm').style.display = 'none';
-      }, 10000);
+      errorForm.style.display = 'block';
+      errorForm.innerHTML = `Preencha seu cpf corretamente`;
+      setTimeout(() => errorForm.style.display = 'none', 10000);
     }
 
     event.preventDefault();
@@ -167,28 +160,26 @@ const clickCheckIn = () => {
 };
 
 const postCheckin = cpf => {
-  document.getElementById('tryagain').style.display = 'none';
+  tryAgain.style.display = 'none';
 
   const params = { text_query: cpf };
 
   axios.post(`${pathUrl}/api/check-in/`, params, config).then(response => {
     if (response.data.status !== 'error') {
-      document.getElementById('result-message').innerHTML = `Seu check-in foi realizado com sucesso, aguarde ser chamado`;
-    } else {
-      document.getElementById('result-message').innerHTML = response.data.message;
-      document.getElementById('tryagain').style.display = 'block';
-    }
-
-    document.getElementById('preloader').style.display = 'none';
-    document.getElementById('section-secondary').style.display = 'block';
+      tryAgain.style.display = 'block';
+    } 
+    
+    resultMessage.innerHTML = response.data.message;
+    sectionSecondary.style.display = 'block';
+    loading.style.display = 'none';
   });
 };
 
 const geoLocationError = () => {
-  document.getElementById('section-secondary').style.display = 'block';
-  document.getElementById('result-message').innerHTML = 'Seu navegador não possui suporte a Geolocalização';
-  document.getElementById('tryagain').style.display = 'block';
-  document.getElementById('preloader').style.display = 'none';
+  resultMessage.innerHTML = `Seu navegador não possui suporte a Geolocalização!`;
+  tryAgain.style.display = 'block';
+  sectionSecondary.style.display = 'block';
+  loading.style.display = 'none';
 };
 
 // Init

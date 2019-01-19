@@ -43,10 +43,8 @@ body {
   .ui-datepicker-inline {
     width: 100%;
   }
-  .ui-datepicker-title {
-    background-color: #00d89c;
-    color: #fff;
-  }
+
+  .ui-datepicker-title,
   .ui-datepicker .ui-datepicker-header {
     background-color: #00d89c;
     color: #fff;
@@ -57,17 +55,25 @@ body {
   .ui-widget-header .ui-state-hover,
   .ui-state-focus,
   .ui-widget-content .ui-state-focus,
-  .ui-widget-header .ui-state-focus,
-  .ui-button:hover,
-  .ui-button:focus {
+  .ui-widget-header .ui-state-focus {
     border: 1px solid #cccccc;
     background: #ffffff;
     font-weight: normal;
     color: #2b2b2b;
   }
+
+  .ui-button {
+    &:hover,
+    &:focus {
+      border: 1px solid #cccccc;
+      background: #ffffff;
+      font-weight: normal;
+      color: #2b2b2b;
+    }
+  }
 }
 
-#section-secondary, #section-checkin-error {
+#section-secondary {
   display: none;
   h2 {
     color: #fff;
@@ -76,26 +82,26 @@ body {
     margin-bottom: 20px;
   }
 
-  ul{
+  ul {
     margin-bottom: 20px;
   }
 
-  h5{
+  h5 {
     color: #fff;
   }
 }
 
-#ios{
+#ios {
   display: none;
 }
 
-#tryagain{
+#tryagain {
   display: none;
   margin: 0 auto;
 }
 
-#result-message{
-  strong{
+#result-message {
+  strong {
     color: red;
     font-size: 25px;
     display: block;
@@ -103,11 +109,9 @@ body {
   }
 }
 
-footer{
+footer {
   margin-top: 50px;
 }
-
-
 
 .select2-container .select2-selection--single {
   box-sizing: border-box;
@@ -118,8 +122,9 @@ footer{
   -webkit-user-select: none;
 }
 
-.select2-container--default .select2-selection--single {
-  display: block;
+.select2-container--default {
+  .select2-selection--single {
+    display: block;
     width: 100%;
     font-size: 1rem;
     line-height: 1.5;
@@ -127,30 +132,28 @@ footer{
     background-color: #fff;
     background-clip: padding-box;
     border: 1px solid #ced4da;
-    border-radius: .25rem;
-    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-}
-
-.select2-container--default .select2-selection--single .select2-selection__rendered {
-  color: #444;
-  line-height: 36px;
-}
-
-.select2-container--default .select2-selection--single .select2-selection__arrow b {
-  border-color: #888 transparent transparent transparent;
-  border-style: solid;
-  border-width: 5px 4px 0 4px;
-  height: 0;
-  left: 50%;
-  margin-left: -4px;
-  margin-top: 3px;
-  position: absolute;
-  top: 50%;
-  width: 0;
-}
-
-.select2-container--default .select2-results__option--highlighted[aria-selected] {
-  background-color: #dddddd;
-  color: #000;
-  font-weight: normal;
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    .select2-selection__rendered {
+      color: #444;
+      line-height: 36px;
+    }
+    .select2-selection__arrow b {
+      border-color: #888 transparent transparent transparent;
+      border-style: solid;
+      border-width: 5px 4px 0 4px;
+      height: 0;
+      left: 50%;
+      margin-left: -4px;
+      margin-top: 3px;
+      position: absolute;
+      top: 50%;
+      width: 0;
+    }
+  }
+  .select2-results__option--highlighted[aria-selected] {
+    background-color: #dddddd;
+    color: #000;
+    font-weight: normal;
+  }
 }
