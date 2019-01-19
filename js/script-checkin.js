@@ -10,7 +10,10 @@ let geoId = 0;
 let km = 0;
 
 buttonTryAgain.click(() => {
-  window.location.reload(true)
+  // window.location.reload(true)
+  document.getElementById('section-secondary').style.display = 'none';
+
+  init()
 });
 
 const startPreloader = () => document.getElementById('preloader').style.display = 'block';
@@ -72,7 +75,7 @@ const geoError = error => {
     msg2: 'As informações de localização não estão disponíveis. Ative a sua localização e tente novamente',
     msg3: 'O pedido para obter a localização do usuário expirou.',
     msg4: 'Ocorreu um erro desconhecido.',
-    msg5: `Você está a <strong>${km}km</strong> de distância do Hospital Gastrovita! <br><br> Tente novamente quando estiver dentro ou próximo do hospital.`,
+    msg5: `Você está a <strong>${km.toFixed(2)}km</strong> de distância do Hospital Gastrovita! <br><br> Tente novamente quando estiver dentro ou próximo do hospital.`,
   }
 
   switch (error.code) {
@@ -128,7 +131,7 @@ const geoDistance = (lat1, lon1, lat2, lon2, unit) => {
 
   let result = false;
 
-  km = Math.round(dist) / 1000
+  km = dist
 
   if (dist < 0.2) {
     result = true;
