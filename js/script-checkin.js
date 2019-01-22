@@ -42,7 +42,7 @@ const geoSuccess = (pos) => {
     latitude: -5.0913084,
     longitude: -42.806426
   };
-
+ 
   const distance = geoDistance(
     baseLocale.latitude,
     baseLocale.longitude,
@@ -64,12 +64,18 @@ const geoError = (error) => {
   let msg = '';
   let activeBtn = false;
 
+  if (km < 1) {
+    km = `${(km * 1000).toFixed()} metros`
+  } else {
+    km = `${km.toFixed()} km`
+  }
+  
   const messages = {
     msg1: `Usuário negou a solicitação de Geolocalização, assim não sendo permitido a realização do check-in online`,
     msg2: `As informações de localização não estão disponíveis. Ative a sua localização e tente novamente`,
     msg3: `O pedido para obter a localização do usuário expirou.`,
     msg4: `Ocorreu um erro desconhecido.`,
-    msg5: `Você está a <strong>${km.toFixed(2)}km</strong> de distância do Hospital Gastrovita! <br><br> Tente novamente quando estiver dentro ou próximo do hospital.`
+    msg5: `Você está aproximadamente <strong>${km}</strong> de distância do Hospital Gastrovita! <br><br> Tente novamente quando estiver dentro ou próximo do hospital.`
   }
 
   switch (error.code) {
@@ -160,12 +166,11 @@ const clickCheckIn = () => {
 };
 
 const postCheckin = cpf => {
-  tryAgain.style.display = 'none';
 
   const params = { text_query: cpf };
 
   axios.post(`${pathUrl}/api/check-in/`, params, config).then(response => {
-    if (response.data.status !== 'error') {
+    if (response.data.status == 'error') {
       tryAgain.style.display = 'block';
     } 
     
