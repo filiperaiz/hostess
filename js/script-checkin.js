@@ -56,6 +56,7 @@ const geoSuccess = (pos) => {
     sectionPrimary.style.display = 'block';
     loading.style.display = 'none';
   } else {
+    sectionPrimary.style.display = 'none';
     geoError({ code: 400, message: 'Wrong Geolocation' });
   }
 };
@@ -69,7 +70,7 @@ const geoError = (error) => {
   } else {
     km = `${km.toFixed()} km`
   }
-  
+
   const messages = {
     msg1: `Usuário negou a solicitação de Geolocalização, assim não sendo permitido a realização do check-in online`,
     msg2: `As informações de localização não estão disponíveis. Ative a sua localização e tente novamente`,
@@ -103,6 +104,7 @@ const geoError = (error) => {
     if (activeBtn) {
       tryAgain.style.display = 'block';
     }
+    sectionPrimary.style.display = 'none';
     sectionSecondary.style.display = 'block';
     resultMessage.innerHTML = msg;
     loading.style.display = 'none';
