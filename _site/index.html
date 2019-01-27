@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+  <meta charset="utf-8" />
+  <meta
+    content="initial-scale=1, shrink-to-fit=no, width=device-width"
+    name="viewport"
+  />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title> Agendamento Online - Hospital Gastrovita </title>
+  <meta property="og:title" content="Hostess">
+  <meta property="og:image" content="https://hostess.netlify.com/img/icons/icon-152x152.png">
+  <meta property="og:description" content="Agendamento Online - Hospital Gastrovita">
+  <meta name="theme-color" content="#369f93"/>
+  <meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description." />
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+
+  <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
+
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/main.css" />
+
+  <link rel="canonical" href="http://localhost:4000/" />
+
+  <!-- icons ios -->
+  <link rel="shortcut icon" href="../img/icons/icon-128x128.png" type="image/x-icon" />
+  <link rel="apple-touch-icon" href="../img/icons/icon-128x128.png" /> 
+  <link rel="apple-touch-icon" sizes="57x57" href="../img/icons/icon-72x72.png" />
+  <link rel="apple-touch-icon" sizes="72x72" href="../img/icons/icon-72x72.png" />
+  <link rel="apple-touch-icon" sizes="114x114" href="../img/icons/icon-128x128.png" />
+  <link rel="apple-touch-icon" sizes="144x144" href="../img/icons/icon-152x152.png" />
+  <link rel="apple-touch-icon" sizes="60x60" href="../img/icons/icon-72x72.png" />
+  <link rel="apple-touch-icon" sizes="120x120" href="../img/icons/icon-128x128.png" />
+  <link rel="apple-touch-icon" sizes="76x76" href="../img/icons/icon-128x128.png" />
+  <link rel="apple-touch-icon" sizes="152x152" href="../img/icons/icon-152x152.png" />
+  
+  <!-- splash ios -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <link rel="apple-touch-startup-image" sizes="2048x2732" href="../img/splash/apple_splash_2048.png" />
+  <link rel="apple-touch-startup-image" sizes="1668x2224" href="../img/splash/apple_splash_1668.png" />
+  <link rel="apple-touch-startup-image" sizes="1536x2048" href="../img/splash/apple_splash_1536.png" />
+  <link rel="apple-touch-startup-image" sizes="1125x2436" href="../img/splash/apple_splash_1125.png" />
+  <link rel="apple-touch-startup-image" sizes="1242x2208" href="../img/splash/apple_splash_1242.png" />
+  <link rel="apple-touch-startup-image" sizes="750x1334" href="../img/splash/apple_splash_750.png" />
+  <link rel="apple-touch-startup-image" sizes="640x1136" href="../img/splash/apple_splash_640.png" />
+
+  <link rel="manifest" href="../manifest.json" />
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register('/sw.js')
+        .then(function() {
+          console.log('Service Worker registered successfully');
+        })
+        .catch(function() {
+          console.log('Service worker registration failed');
+        });
+    }
+  </script>
+</head>
+
+  <body>
+    <header><div class="container">
+  <div class="row">
+    <div class="col">
+      <div class="hostess_section-header">
+        <img src="/img/logo-horizonatal-white.png" alt="logo" width="220" />
+        <h2>Agendamento Online - Hospital Gastrovita</h2>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+    <main><section id="section-primary" class="container section-form">
+  <div class="row">
+    <div class="col">
+
+      <div id="errorForm" style="display: none;" class="alert alert-danger alert-dismissible fade show" role="alert">
+      </div>
+
+      <form onsubmit="saveSchedule()" id="hostess_form" class="hostess_form" novalidate>
+
+        <div class="form-row">
+          <div class="form-group col-sm-12 col-md-12">
+            <label class="hostess_form-label" for="userName">Nome completo *</label>
+            <input type="text" class="form-control" id="userName" name="userName" placeholder="Ex: Maria José " required />
+          </div>
+
+          <div class="form-group col-sm-12 col-md-6">
+            <label class="hostess_form-label" for="userCpf">CPF *</label>
+            <input type="text" class="form-control" id="userCpf" name="userCpf" placeholder="Ex: 000.000.000-00 " required />
+          </div>
+
+          <div class="form-group col-sm-12 col-md-6">
+            <label class="hostess_form-label" for="userFone">Telefone *</label>
+            <input type="text" class="form-control" id="userFone" name="userFone" placeholder="Ex: (00) 00000-0000" required />
+          </div>
+
+        </div>
+
+        <hr class="divisor">
+
+        <div class="form-row">
+          <div class="form-group col-sm-12 col-md-6 select-click">
+            <label class="hostess_form-label" for="selectProcedures">Procedimento *</label>
+            <select class="form-control" id="selectProcedures" name="procedures" required>
+              <option></option>
+            </select>
+          </div>
+
+          <div class="form-group col-sm-12 col-md-6 select-click">
+            <label class="hostess_form-label" for="selectAgreement">Convênio *</label>
+            <select class="form-control" id="selectAgreement" name="agreement" required>
+              <option value="">Selecione um convênio</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-sm-12 col-md-12 select-click">
+            <label class="hostess_form-label" for="selectProfessionals">Profissionais *</label>
+            <select class="form-control" id="selectProfessionals" name="professionals" required>
+              <option value="">Selecione um profissional </option>
+            </select>
+          </div>
+        </div>
+
+        <hr class="divisor">
+
+        <div class="form-row">
+          <div class="form-group col-sm-12 col-md-6">
+            <label class="hostess_form-label" for="selectDateHour">Horários Disponíveis *</label>
+            <select class="form-control" id="selectDateHour" name="datehour" required>
+              <option value="">Selecione um horário</option>
+            </select>
+          </div>
+
+
+          <div class="form-group col-sm-12 col-md-6">
+            <div id="other-hour" style="display: none;">
+              <label class="hostess_form-label" for="otherHour">Horário Selecionado</label>
+              <div id="otherHourList"></div>
+              <hr>
+            </div>
+
+            <label class="hostess_form-label" for="btnMoreDatetime">Deseja ver outros horários?</label> <br>
+
+            <button type="button" class="btn btn-light" id="btnMoreDatetime" data-toggle="modal" data-target="#modalDate">
+              Clique aqui
+            </button>
+
+
+            <div class="modal fade" id="modalDate" tabindex="-1" role="dialog" aria-labelledby="modalDateLabel" aria-hidden="true" >
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      
+        <div class="modal-header">
+            <h5 class="modal-title">Selecione a data e horário desejado</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+      <div class="modal-body">
+        <div id="datepicker"></div>
+        
+        <hr class="divisor">
+
+        <div id="error" style="display: none;" class="alert alert-danger"></div>
+
+        <div id="select-time" style="display: none;" class="form-group col-sm-12 col-md-6">
+            <label class="font-weight-bold" for="modalSelectDateHour">Horários*</label>
+            <select class="form-control" id="modalSelectDateHour" name="modalSelectDateHour">
+                <option value="">Selecione um horário</option>
+            </select>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-danger" data-dismiss="modal">
+          Cancelar
+        </button>
+        <button type="button" id="btnModalConfirm" class="btn btn-warning">
+          Confirmar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+          </div>
+        </div>
+
+        <hr class="divisor">
+        <div class="row justify-content-md-center">
+        
+          <div class="col-md-auto">
+            <button id="onSave" type="submit" class="btn btn-lg btn-warning btn-block">
+              Agendar Consulta
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section id="section-secondary" class="container section-form">
+    <div class="row">
+  <div class="col"><h2>Seu agendamento foi realizado com sucesso</h2></div>
+</div>
+
+<div class="row justify-content-md-center">
+  <div class="col-md-6 col-md-auto">
+    <div id="confirm-list"></div>
+
+    <ul id="ios" class="list-group">
+      <li class="list-group-item">
+        Para adicionar o Hostess à sua área de trabalho, sigo o passo a passo a
+        seguir.
+      </li>
+      <li class="list-group-item">
+        1. Clique no ícone de compartilhamento do seu navegador(Safari) 
+      </li>
+      <li class="list-group-item">
+        <img
+          class="img-fluid"
+          src="https://c866088.ssl.cf3.rackcdn.com/assets/ios_share_1.png"
+          alt=""
+        />
+      </li>
+      <li class="list-group-item">
+        2. Selecione a opção "Adicionar à tela inicial"
+      </li>
+      <li class="list-group-item">
+        <img
+          class="img-fluid"
+          src="https://c866088.ssl.cf3.rackcdn.com/assets/ios_homepage.png"
+          alt=""
+        />
+      </li>
+    </ul>
+
+    <ul id="android" class="list-group">
+      <li class="list-group-item">
+        Para adicionar o Hostess à sua área de trabalho, sigo o passo a passo a
+        seguir.
+      </li>
+      <li class="list-group-item">
+        1. Clique nos três pontinhos no canto superior direito do navegador
+      </li>
+      <li class="list-group-item">
+        2. Clique na opção “Adicionar a área de trabalho”
+      </li>
+    </ul>
+
+    <button
+      id="reschedule"
+      type="submit"
+      class="btn btn-lg btn-warning  btn-block mt-3"
+    >
+      Nova consulta
+    </button>
+  </div>
+</div>
+
+</section>
+</main>
+
+    <footer><div class="container section-form">
+  <div class="row">
+    <div class="col">
+      <p class="text text-center text-light">
+        © 2018 <span class="highlight">Hostess</span> - Licenciado para
+        <span class="highlight">Hospital Gastrovita</span>
+      </p>
+    </div>
+  </div>
+</div>
+</footer>
+
+    <script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"
+></script>
+
+<script
+  src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+  integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+  crossorigin="anonymous"
+></script>
+
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+  integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+  crossorigin="anonymous"
+></script>
+
+<script
+  src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+  integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+  crossorigin="anonymous"
+></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
+
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
+
+<script src="./js/push-notification.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+
+    <script src="./js/script.js"></script>
+  </body>
+</html>
