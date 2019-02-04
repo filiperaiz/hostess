@@ -1,5 +1,8 @@
-const pathUrl = 'https://demo.hostess.digital/agenda';
+// const pathUrl = 'https://demo.hostess.digital/agenda';
+const pathUrl = `${window.location.origin}/agenda`;
+
 const config = { headers: { 'Content-Type': 'application/json' }};
+
 
 const userCpfInput = $('#userCpf');
 const buttonTryAgain = $('#tryagain');
